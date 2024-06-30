@@ -1,7 +1,8 @@
-
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const tasksList = document.getElementById('tasks-list');
     const taskForm = document.getElementById('task-form');
+    const sortSelect = document.getElementById('sort-select');
+    const searchInput = document.getElementById('search-input');
     const API_URL = 'https://jsonplaceholder.typicode.com/todos'; // Dummy API URL
     let tasks = []; // Initialize tasks as an array
   
@@ -147,6 +148,39 @@
         .catch(error => {
           console.error('Error adding task:', error);
         });
+    });
+  
+    // Function to sort tasks by status (completed, pending, or all)
+    function sortTasksByStatus(sortBy) {
+      let sortedTasks = [];
+      if (sortBy === 'all') {
+        sortedTasks = tasks.slice(); // Copy all tasks
+      } else if (sortBy === 'completed') {
+        sortedTasks = tasks.filter(task => task.completed);
+      } else if (sortBy === 'pending') {
+        sortedTasks = tasks.filter(task => !task.completed);
+      }
+      renderTasks(sortedTasks); // Render sorted tasks
+    }
+  
+    // Event listener for sort select dropdown
+    sortSelect.addEventListener('change', function() {
+      const sortBy = sortSelect.value;
+      sortTasksByStatus(sortBy);
+    });
+  
+    // Function to filter tasks by title using search input
+    function filterTasksByTitle(searchText) {
+      const filteredTasks = tasks.filter(task =>
+        task.title.toLowerCase().includes(searchText.toLowerCase())
+      );
+      renderTasks(filteredTasks); // Render filtered tasks
+    }
+  
+    // Event listener for search input
+    searchInput.addEventListener('input', function() {
+      const searchText = searchInput.value.trim();
+      filterTasksByTitle(searchText);
     });
   
     // Initial fetch and render tasks
